@@ -1,0 +1,20 @@
+<h2 mat-dialog-title>Goals</h2>
+
+<mat-dialog-content>
+  <h3 mat-dialog-title>Incomplete:</h3>
+  <div class="incomplete">
+    @for (goal of testGoal.incompleteGoals; track goal; let i = $index ) {
+    <mat-checkbox [checked]="goal.completed" (change)="updateGoal($event.checked, i)">{{
+      goal.name
+    }}</mat-checkbox>
+    }
+  </div>
+  <h3 mat-dialog-title>Complete:</h3>
+  <div class="complete">
+    @for (goal of testGoal.completeGoals; track goal; let i = $index ) {
+    <mat-checkbox [checked]="goal.completed" (change)="updateGoal($event.checked, i)">{{
+      goal.name
+    }}</mat-checkbox>
+    }
+  </div>
+</mat-dialog-content>

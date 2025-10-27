@@ -1,0 +1,8 @@
+.freq{
+display: flex;
+gap: 1rem;
+}
+
+.input{
+    width: 100%;
+}

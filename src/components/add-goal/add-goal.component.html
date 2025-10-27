@@ -1,0 +1,49 @@
+<h2 mat-dialog-title>Goal Details:</h2>
+<ol>
+  <li>
+    <mat-form-field>
+      <mat-label>Goal Name: </mat-label>
+      <input matInput [(ngModel)]="goalName" />
+      <mat-hint>Name of the goal</mat-hint>
+    </mat-form-field>
+  </li>
+  <li>
+    <mat-form-field>
+      <mat-label>Goal Target: </mat-label>
+      <input matInput [(ngModel)]="goalTarget" />
+      <mat-hint>Planned Accomplishment</mat-hint>
+    </mat-form-field>
+  </li>
+  <li>
+    <div class="freq">
+      <mat-form-field>
+        <mat-label>Frequency: </mat-label>
+        <input matInput [(ngModel)]="frequency" />
+        <mat-hint>How Often</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>TimeFrame: </mat-label>
+        <mat-select [(ngModel)]="timeframe">
+          @for(freq of goalFreq; track freq){
+          <mat-option [value]="freq">{{ freq }}</mat-option>
+          }
+        </mat-select>
+        <mat-hint>How Long</mat-hint>
+      </mat-form-field>
+    </div>
+  </li>
+  <li>
+    <mat-form-field>
+      <mat-label>Start Date</mat-label>
+      <input matInput [(ngModel)]="date" [matDatepicker]="picker" />
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </li>
+</ol>
+<mat-dialog-actions>
+  <button matButton mat-dialog-close>Cancel</button>
+  <button matButton (click)="createNewGoal()">Save</button>
+</mat-dialog-actions>
