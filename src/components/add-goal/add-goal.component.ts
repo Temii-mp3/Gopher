@@ -15,7 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { Goal } from '../../app/models/goal.model';
+import { Goal } from '../../models/goal.model';
 
 @Component({
   selector: 'app-add-goal.component',
@@ -42,7 +42,7 @@ export class AddGoalComponent {
   readonly goalTarget = signal('');
   readonly frequency = signal('');
   readonly timeframe = signal('');
-  readonly date = signal('');
+  readonly date = signal<Date | null>(null);
   goalFreq: String[] = ['Daily', 'Weekly', 'Biweekly', 'Monthly'];
 
   createNewGoal() {
@@ -50,11 +50,11 @@ export class AddGoalComponent {
       name: this.goalName(),
       target: this.goalTarget(),
       frequency: this.frequency() + this.timeframe(),
-      start: this.date(),
+      start: this.date()!,
       completed: false,
     };
 
-    console.log(goal);
-    this.testService.incompleteGoals.push(goal);
+    console.log(goal.start.toLocaleDateString('en-US'));
+    this.testService.goals.push(goal);
   }
 }

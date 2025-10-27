@@ -4,7 +4,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatDialogTitle } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { TestGoal } from '../../services/test-goal.service';
-import { Goal } from '../../app/models/goal.model';
+import { Goal } from '../../models/goal.model';
 @Component({
   selector: 'app-view-goal.component',
   imports: [MatButtonModule, MatDialogModule, MatDialogTitle, MatCheckboxModule],
@@ -14,25 +14,14 @@ import { Goal } from '../../app/models/goal.model';
 })
 export class ViewGoalComponent {
   testGoal = inject(TestGoal);
-
-  updateGoal(completed: boolean, index: number) {
+  currDate: string = new Date().toLocaleDateString();
+  updateGoal(completed: boolean, name: string) {
     console.log(completed);
-    let target = this.testGoal.incompleteGoals.at(index);
+    let target = this.testGoal.goals.find((c) => c.name === name);
     if (target == undefined) {
-      target = this.testGoal.completeGoals.at(index);
-      if (target == undefined) {
-        return;
-      }
+      return;
     }
 
     target.completed = completed;
-
-    if (target.completed == false) {
-      this.testGoal.completeGoals.splice(index, 1);
-      this.testGoal.incompleteGoals.push(target);
-    } else {
-      this.testGoal.incompleteGoals.splice(index, 1);
-      this.testGoal.completeGoals.push(target);
-    }
   }
 }
