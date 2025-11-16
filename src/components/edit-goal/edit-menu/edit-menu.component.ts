@@ -61,5 +61,18 @@ export class EditMenuComponent {
     this.date.set(this.data.start);
   }
 
-  editGoal() {}
+  editGoal() {
+    const goal: Goal = {
+      name: this.goalName(),
+      target: this.goalTarget(),
+      frequency: this.frequency(),
+      timeframe: this.timeframe(),
+      start: this.date()!,
+      completed: false,
+      id: this.data.id,
+    };
+
+    const prevIndex = this.testService.goals.findIndex((c) => c.id == this.data.id);
+    this.testService.goals.splice(prevIndex, 1, goal);
+  }
 }

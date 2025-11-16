@@ -5,4 +5,5 @@ export interface Goal {
   timeframe: string;
   start: Date;
   completed: boolean;
+  id: string;
 }

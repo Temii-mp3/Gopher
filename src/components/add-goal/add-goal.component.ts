@@ -52,6 +52,9 @@ export class AddGoalComponent {
     }
     console.log(this.freqOptions);
   }
+  randomIDGenerator(): string {
+    return (Math.floor(Math.random() * (100 - 500 + 1)) + 100).toString();
+  }
 
   createNewGoal() {
     const goal: Goal = {
@@ -61,6 +64,7 @@ export class AddGoalComponent {
       timeframe: this.timeframe(),
       start: this.date()!,
       completed: false,
+      id: this.randomIDGenerator(),
     };
 
     console.log(goal.start.toLocaleDateString('en-US'));
