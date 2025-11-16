@@ -7,6 +7,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { TestGoal } from '../../services/test-goal.service';
 import { MatMenuModule, MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { EditMenuComponent } from './edit-menu/edit-menu.component';
+import { Goal } from '../../models/goal.model';
 @Component({
   selector: 'app-edit-goal.component',
   imports: [
@@ -32,6 +33,8 @@ export class EditGoalComponent {
     dialogRef.afterClosed().subscribe(() => this.menuTrigger().focus());
   }
 
-  editGoal() {}
-  deleteGoal() {}
+  editGoal(goal: Goal) {
+    const dialogRef = this.menu.open(EditMenuComponent, { data: goal });
+  }
+  deleteGoal(goal: Goal) {}
 }

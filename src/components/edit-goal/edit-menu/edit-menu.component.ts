@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal, model, inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
+  MatDialog,
   MatDialogActions,
   MatDialogClose,
   MatDialogContent,
@@ -35,4 +36,30 @@ import { Goal } from '../../../models/goal.model';
   styleUrl: './edit-menu.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EditMenuComponent {}
+export class EditMenuComponent {
+  data: Goal = inject(MAT_DIALOG_DATA);
+
+  testService = inject(TestGoal);
+  datePicker = model<Date | null>(null);
+  readonly goalName = signal('');
+  readonly goalTarget = signal('');
+  readonly frequency = signal('');
+  readonly timeframe = signal('');
+  readonly date = signal<Date | null>(null);
+  goalFreq: String[] = ['Daily', 'Weekly', 'Biweekly', 'Monthly'];
+
+  freqOptions: String[] = [];
+
+  constructor() {
+    for (let i = 0; i < 10; i++) {
+      this.freqOptions.push(i.toString() + 'x');
+    }
+    this.goalName.set(this.data.name);
+    this.goalTarget.set(this.data.target);
+    this.frequency.set(this.data.frequency);
+    this.timeframe.set(this.data.timeframe);
+    this.date.set(this.data.start);
+  }
+
+  editGoal() {}
+}

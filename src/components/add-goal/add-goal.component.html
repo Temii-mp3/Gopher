@@ -18,7 +18,11 @@
     <div class="freq">
       <mat-form-field>
         <mat-label>Frequency: </mat-label>
-        <input matInput [(ngModel)]="frequency" />
+        <mat-select [(ngModel)]="frequency" name="freq">
+          @for(freq of freqOptions; track freq){
+          <mat-option [value]="freq">{{ freq }}</mat-option>
+          }
+        </mat-select>
         <mat-hint>How Often</mat-hint>
       </mat-form-field>
 

@@ -44,12 +44,21 @@ export class AddGoalComponent {
   readonly timeframe = signal('');
   readonly date = signal<Date | null>(null);
   goalFreq: String[] = ['Daily', 'Weekly', 'Biweekly', 'Monthly'];
+  freqOptions: String[] = [];
+
+  constructor() {
+    for (let i = 0; i < 10; i++) {
+      this.freqOptions.push(i.toString() + 'x');
+    }
+    console.log(this.freqOptions);
+  }
 
   createNewGoal() {
     const goal: Goal = {
       name: this.goalName(),
       target: this.goalTarget(),
-      frequency: this.frequency() + this.timeframe(),
+      frequency: this.frequency(),
+      timeframe: this.timeframe(),
       start: this.date()!,
       completed: false,
     };
