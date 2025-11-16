@@ -8,6 +8,7 @@ import { TestGoal } from '../../services/test-goal.service';
 import { MatMenuModule, MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { EditMenuComponent } from './edit-menu/edit-menu.component';
 import { Goal } from '../../models/goal.model';
+import { DeleteMenuComponent } from './delete-menu/delete-menu.component';
 @Component({
   selector: 'app-edit-goal.component',
   imports: [
@@ -36,5 +37,7 @@ export class EditGoalComponent {
   editGoal(goal: Goal) {
     const dialogRef = this.menu.open(EditMenuComponent, { data: goal });
   }
-  deleteGoal(goal: Goal) {}
+  deleteGoal(goal: Goal) {
+    const dialogRef = this.menu.open(DeleteMenuComponent, { data: goal });
+  }
 }

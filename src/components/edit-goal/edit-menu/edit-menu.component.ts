@@ -38,7 +38,6 @@ import { Goal } from '../../../models/goal.model';
 })
 export class EditMenuComponent {
   data: Goal = inject(MAT_DIALOG_DATA);
-
   testService = inject(TestGoal);
   datePicker = model<Date | null>(null);
   readonly goalName = signal('');

@@ -1,1 +1,6 @@
-<p>delete-menu.component works!</p>
+<h2 mat-dialog-title>Delete file</h2>
+<mat-dialog-content> Would you like to delete {{ this.data.name }} Goal? </mat-dialog-content>
+<mat-dialog-actions>
+  <button matButton mat-dialog-close>No</button>
+  <button (click)="deleteGoal()" mat-dialog-close cdkFocusInitial>Yes</button>
+</mat-dialog-actions>

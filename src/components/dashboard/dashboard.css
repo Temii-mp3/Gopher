@@ -1,6 +1,5 @@
 .header{
     padding: 20px;
-    background-color: grey;
 }
 
 .h1{
@@ -11,25 +10,39 @@
 .goalOptions{
     /* background-color: red; */
     padding: 10px;
+    display: flex;
+    gap: 3rem;
 
 }
-.chart_optionsContainer{
-    /* background-color: blue; */
+/* .chart_optionsContainer{
     padding: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
 
+} */
+
+
+
+.chart_goalsContainer{
+    display: flex;
+    justify-content: center;
 }
 
-.chart{
-    position: relative;
-    background-color: blueviolet;
-    padding: 20%;
-    height: 10%;
-    width: 60%;
+.chart_goalsCard{
+    padding: 2rem;
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
 }
 
+.goalCard{
+    width: 50rem;
+}
+
+.goalContainer{
+    margin-top: 2rem;
+}
 .mainContainer{
     display: flex;
     flex-direction: column;
