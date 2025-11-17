@@ -12,8 +12,8 @@
       </div>
       <div class="goalOptions">
         <button (click)="addGoal()">New Goal</button>
-        <button (click)="viewGoal()">View Goals</button>
-        <button (click)="editGoal()">Edit Goals</button>
+        <button (click)="toggleView()" [class.isFocused]="viewMode">View Goals</button>
+        <button (click)="toggleEdit()" [class.isFocused]="editMode">Edit Goals</button>
       </div>
       <div class="chart_goalsContainer">
         <mat-card class="chart_goalsCard" appearance="outlined">
@@ -30,10 +30,11 @@
             </canvas>
           </div>
           <div class="goalContainer">
+            @if(viewMode) {
             <mat-card class="goalCard" appearance="outlined">
               <mat-card-header>
                 <mat-card-title>Your Goals</mat-card-title>
-                <mat-card-subtitle>Edit/View Goals</mat-card-subtitle>
+                <mat-card-subtitle>Goals for: {{ currDate }} </mat-card-subtitle>
               </mat-card-header>
               <mat-card-content>
                 @for (item of testService.goals; track item.id) {
@@ -46,6 +47,32 @@
                 }
               </mat-card-content>
             </mat-card>
+            } @else{
+            <mat-card class="goalCard" appearance="outlined">
+              <mat-card-header>
+                <mat-card-title>Your Goals</mat-card-title>
+                <mat-card-subtitle>Edit Goals</mat-card-subtitle>
+              </mat-card-header>
+              <mat-dialog-content>
+                @for (goal of testService.goals; track goal.id) {
+
+                <mat-card class="edit_container">
+                  <mat-card-header>
+                    <mat-card-title>{{ goal.name }}</mat-card-title>
+                    <mat-card-subtitle>{{ goal.target }}</mat-card-subtitle>
+                  </mat-card-header>
+                  <button matIconButton [matMenuTriggerFor]="menu" #menuTrigger>
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="editGoal(goal)">Edit</button>
+                    <button mat-menu-item (click)="deleteGoal(goal)">Delete</button>
+                  </mat-menu>
+                </mat-card>
+                }
+              </mat-dialog-content>
+            </mat-card>
+            }
           </div>
         </mat-card>
       </div>

@@ -1,23 +1,48 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogContent } from '@angular/material/dialog';
 import { AddGoalComponent } from '../add-goal/add-goal.component';
-import { ViewGoalComponent } from '../view-goal/view-goal.component';
 import { MatAnchor } from '@angular/material/button';
-import { EditGoalComponent } from '../edit-goal/edit-goal.component';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatDialogTitle } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatMenuModule, MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { ChartConfiguration, ChartOptions, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { TestGoal } from '../../services/test-goal.service';
+import { NgClass } from '@angular/common';
+import { Goal } from '../../models/goal.model';
+import { EditMenuComponent } from './edit-menu/edit-menu.component';
+import { DeleteMenuComponent } from './delete-menu/delete-menu.component';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [MatAnchor, BaseChartDirective, MatButtonModule, MatCardModule],
+  imports: [
+    MatAnchor,
+    BaseChartDirective,
+    MatButtonModule,
+    MatCardModule,
+    MatButtonToggleModule,
+    NgClass,
+    MatDialogTitle,
+    MatIconModule,
+    MatCheckboxModule,
+    MatMenuModule,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    MatDialogContent,
+  ],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css',
+  styleUrls: ['./dashboard.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Dashboard {
+  viewMode: boolean = true;
+  editMode: boolean = false;
+  currDate: string = new Date().toLocaleDateString();
   readonly dialog = inject(MatDialog);
 
   testService = inject(TestGoal);
@@ -26,12 +51,22 @@ export class Dashboard {
     this.dialog.open(AddGoalComponent);
   }
 
-  viewGoal() {
-    this.dialog.open(ViewGoalComponent);
+  editGoal(goal: Goal) {
+    this.dialog.open(EditMenuComponent, { data: goal });
+  }
+  deleteGoal(goal: Goal) {
+    this.dialog.open(DeleteMenuComponent, { data: goal });
   }
 
-  editGoal() {
-    this.dialog.open(EditGoalComponent);
+  toggleView() {
+    this.viewMode = !this.viewMode;
+    this.editMode = false;
+    console.log(this.viewMode);
+  }
+  toggleEdit() {
+    this.editMode = !this.editMode;
+    this.viewMode = false;
+    console.log(this.editMode);
   }
   public lineChartData: ChartConfiguration<'line'>['data'] = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
