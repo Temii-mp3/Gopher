@@ -4,6 +4,7 @@ export interface Goal {
   frequency: string;
   timeframe: string;
   start: Date;
+  end: Date;
   completed: boolean;
   id: string;
 }

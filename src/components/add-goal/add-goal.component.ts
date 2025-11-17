@@ -36,13 +36,15 @@ import { Goal } from '../../models/goal.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddGoalComponent {
+  currDate: number = new Date().getDate();
   testService = inject(TestGoal);
   datePicker = model<Date | null>(null);
   readonly goalName = signal('');
   readonly goalTarget = signal('');
   readonly frequency = signal('');
   readonly timeframe = signal('');
-  readonly date = signal<Date | null>(null);
+  readonly startDate = signal<Date | null>(null);
+  readonly endDate = signal<Date | null>(null);
   goalFreq: String[] = ['Daily', 'Weekly', 'Biweekly', 'Monthly'];
   freqOptions: String[] = [];
 
@@ -62,7 +64,8 @@ export class AddGoalComponent {
       target: this.goalTarget(),
       frequency: this.frequency(),
       timeframe: this.timeframe(),
-      start: this.date()!,
+      start: this.startDate()!,
+      end: this.endDate()!,
       completed: false,
       id: this.randomIDGenerator(),
     };
@@ -70,4 +73,15 @@ export class AddGoalComponent {
     console.log(goal.start.toLocaleDateString('en-US'));
     this.testService.goals.push(goal);
   }
+
+  startFilter = (d: Date | null): boolean => {
+    const date = (d || new Date()).getDate();
+    return this.currDate <= date;
+  };
+
+  endFilter = (d: Date | null): boolean => {
+    const date = (d || new Date()).getDate();
+    const startDate = this.startDate()!.getDate();
+    return this.currDate <= date && startDate <= date;
+  };
 }

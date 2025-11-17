@@ -44,7 +44,8 @@ export class EditMenuComponent {
   readonly goalTarget = signal('');
   readonly frequency = signal('');
   readonly timeframe = signal('');
-  readonly date = signal<Date | null>(null);
+  readonly startDate = signal<Date | null>(null);
+  readonly endDate = signal<Date | null>(null);
   goalFreq: String[] = ['Daily', 'Weekly', 'Biweekly', 'Monthly'];
 
   freqOptions: String[] = [];
@@ -57,7 +58,8 @@ export class EditMenuComponent {
     this.goalTarget.set(this.data.target);
     this.frequency.set(this.data.frequency);
     this.timeframe.set(this.data.timeframe);
-    this.date.set(this.data.start);
+    this.startDate.set(this.data.start);
+    this.endDate.set(this.data.end);
   }
 
   editGoal() {
@@ -66,7 +68,8 @@ export class EditMenuComponent {
       target: this.goalTarget(),
       frequency: this.frequency(),
       timeframe: this.timeframe(),
-      start: this.date()!,
+      start: this.startDate()!,
+      end: this.endDate()!,
       completed: false,
       id: this.data.id,
     };
