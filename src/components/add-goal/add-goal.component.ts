@@ -7,6 +7,7 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { TestGoal } from '../../services/test-goal.service';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,6 +17,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { Goal } from '../../models/goal.model';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatCard } from '@angular/material/card';
 
 @Component({
   selector: 'app-add-goal.component',
@@ -29,6 +32,8 @@ import { Goal } from '../../models/goal.model';
     MatInputModule,
     FormsModule,
     MatButtonModule,
+    ReactiveFormsModule,
+    MatCard,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './add-goal.component.html',
@@ -36,52 +41,73 @@ import { Goal } from '../../models/goal.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddGoalComponent {
+  newGoalForm!: FormGroup;
+
   currDate: number = new Date().getDate();
   testService = inject(TestGoal);
   datePicker = model<Date | null>(null);
-  readonly goalName = signal('');
-  readonly goalTarget = signal('');
-  readonly frequency = signal('');
-  readonly timeframe = signal('');
-  readonly startDate = signal<Date | null>(null);
-  readonly endDate = signal<Date | null>(null);
+
   goalFreq: String[] = ['Daily', 'Weekly', 'Biweekly', 'Monthly'];
   freqOptions: String[] = [];
+  readonly dialogRef = inject(MatDialogRef<AddGoalComponent>);
+  errorMessage = signal('');
 
-  constructor() {
+  constructor(private fb: FormBuilder) {
     for (let i = 0; i < 10; i++) {
       this.freqOptions.push(i.toString() + 'x');
     }
     console.log(this.freqOptions);
+
+    this.newGoalForm = this.fb.group({
+      name: ['', Validators.required],
+      target: [''],
+      frequency: ['', Validators.required],
+      timeframe: ['', Validators.required],
+      startDate: [null, Validators.required],
+      endDate: [null, Validators.required],
+    });
   }
   randomIDGenerator(): string {
     return (Math.floor(Math.random() * (100 - 500 + 1)) + 100).toString();
   }
 
   createNewGoal() {
+    if (this.newGoalForm.invalid) {
+      alert('Please fill out all required fields.');
+      return;
+    }
     const goal: Goal = {
-      name: this.goalName(),
-      target: this.goalTarget(),
-      frequency: this.frequency(),
-      timeframe: this.timeframe(),
-      start: this.startDate()!,
-      end: this.endDate()!,
+      ...this.newGoalForm.value,
       completed: false,
       id: this.randomIDGenerator(),
     };
 
-    console.log(goal.start.toLocaleDateString('en-US'));
+    console.log(goal);
     this.testService.goals.push(goal);
+    this.dialogRef.close();
   }
 
   startFilter = (d: Date | null): boolean => {
     const date = (d || new Date()).getDate();
+    if (!date) return true;
     return this.currDate <= date;
   };
 
   endFilter = (d: Date | null): boolean => {
     const date = (d || new Date()).getDate();
-    const startDate = this.startDate()!.getDate();
+    const startDate = this.newGoalForm.get('startDate')!.value.getDate();
     return this.currDate <= date && startDate <= date;
   };
+
+  onCancelClick(): void {
+    this.dialogRef.close();
+  }
+
+  updateErrorMessage() {
+    if (this.newGoalForm.hasError('required')) {
+      this.errorMessage.set('You must enter a value');
+    } else {
+      this.errorMessage.set('YOLO');
+    }
+  }
 }

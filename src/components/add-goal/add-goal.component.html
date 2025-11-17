@@ -1,65 +1,69 @@
 <h2 mat-dialog-title>Goal Details:</h2>
-<ol>
-  <mat-form-field>
-    <mat-label>Goal Name: </mat-label>
-    <input matInput [(ngModel)]="goalName" />
-    <mat-hint>Name of the goal</mat-hint>
-  </mat-form-field>
+<mat-card appearance="outlined">
+  <div>
+    <form class="goalGrid" [formGroup]="newGoalForm" (blur)="updateErrorMessage()">
+      <mat-form-field appearance="fill">
+        <mat-label>Goal Name: </mat-label>
+        <input matInput formControlName="name" />
+        <mat-hint>Name of the goal</mat-hint>
+      </mat-form-field>
 
-  <mat-form-field>
-    <mat-label>Goal Target: </mat-label>
-    <input matInput [(ngModel)]="goalTarget" />
-    <mat-hint>Planned Accomplishment</mat-hint>
-  </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Goal Target: </mat-label>
+        <input matInput formControlName="target" />
+        <mat-hint>Planned Accomplishment</mat-hint>
+      </mat-form-field>
 
-  <div class="freq">
-    <mat-form-field>
-      <mat-label>Frequency: </mat-label>
-      <mat-select [(ngModel)]="frequency" name="freq">
-        @for(freq of freqOptions; track freq){
-        <mat-option [value]="freq">{{ freq }}</mat-option>
-        }
-      </mat-select>
-      <mat-hint>How Often</mat-hint>
-    </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Frequency: </mat-label>
+        <mat-select formControlName="frequency" name="freq">
+          @for(freq of freqOptions; track freq){
+          <mat-option [value]="freq">{{ freq }}</mat-option>
+          }
+        </mat-select>
+        <mat-hint>How Often</mat-hint>
+      </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>TimeFrame: </mat-label>
-      <mat-select [(ngModel)]="timeframe">
-        @for(freq of goalFreq; track freq){
-        <mat-option [value]="freq">{{ freq }}</mat-option>
-        }
-      </mat-select>
-      <mat-hint>How Long</mat-hint>
-    </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>TimeFrame: </mat-label>
+        <mat-select formControlName="timeframe">
+          @for(freq of goalFreq; track freq){
+          <mat-option [value]="freq">{{ freq }}</mat-option>
+          }
+        </mat-select>
+        <mat-hint>How Long</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Start Date</mat-label>
+        <input
+          matInput
+          formControlName="startDate"
+          [matDatepickerFilter]="startFilter"
+          [matDatepicker]="picker"
+        />
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>End Date</mat-label>
+        <input
+          matInput
+          formControlName="endDate"
+          [matDatepickerFilter]="endFilter"
+          [matDatepicker]="endPicker"
+        />
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+    </form>
   </div>
-  <mat-form-field>
-    <mat-label>Start Date</mat-label>
-    <input
-      matInput
-      [matDatepickerFilter]="startFilter"
-      [(ngModel)]="startDate"
-      [matDatepicker]="picker"
-    />
-    <mat-hint>MM/DD/YYYY</mat-hint>
-    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
-  </mat-form-field>
 
-  <mat-form-field>
-    <mat-label>End Date</mat-label>
-    <input
-      matInput
-      [(ngModel)]="endDate"
-      [matDatepickerFilter]="endFilter"
-      [matDatepicker]="endPicker"
-    />
-    <mat-hint>MM/DD/YYYY</mat-hint>
-    <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
-    <mat-datepicker #endPicker></mat-datepicker>
-  </mat-form-field>
-</ol>
-<mat-dialog-actions>
-  <button matButton mat-dialog-close>Cancel</button>
-  <button matButton (click)="createNewGoal()">Save</button>
-</mat-dialog-actions>
+  <mat-dialog-actions>
+    <button class="bttn" (click)="onCancelClick()">Cancel</button>
+    <button class="bttn" (click)="createNewGoal()">Save</button>
+  </mat-dialog-actions>
+</mat-card>
