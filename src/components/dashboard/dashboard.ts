@@ -11,12 +11,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule, MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { ChartConfiguration, ChartOptions, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
-import { TestGoal } from '../../services/test-goal.service';
+import { TestGoal } from '../../services/goal.service';
 import { NgClass } from '@angular/common';
-import { Goal } from '../../models/goal.model';
+import { Goal } from '../../models/models';
 import { EditMenuComponent } from './edit-menu/edit-menu.component';
 import { DeleteMenuComponent } from './delete-menu/delete-menu.component';
 import { MatPaginatorModule, MatPaginator, PageEvent } from '@angular/material/paginator';
+import { AddSprintComponent } from '../add-sprint.component/add-sprint.component';
+import { SprintService } from '../../services/sprint.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -47,6 +49,7 @@ export class Dashboard {
   pageSize: number = 5;
   pageIndex: number = 0;
   pageSizeOptions: number[] = [5];
+  testService2 = inject(SprintService);
 
   viewMode: boolean = true;
   editMode: boolean = false;
@@ -78,6 +81,22 @@ export class Dashboard {
     this.dialog.open(AddGoalComponent);
   }
 
+  createSprint() {
+    this.dialog.open(AddSprintComponent);
+  }
+
+  startSprint() {
+    this.testService2.sprint[0].status = 'active';
+  }
+
+  endSprint() {
+    this.testService2.sprint[0].status = 'completed';
+  }
+
+  getCurrSprint() {
+    return this.testService2.sprint[0] == null ? null : this.testService2.sprint[0];
+  }
+
   editGoal(goal: Goal) {
     this.dialog.open(EditMenuComponent, { data: goal });
   }
@@ -94,6 +113,10 @@ export class Dashboard {
     this.editMode = !this.editMode;
     this.viewMode = false;
     console.log(this.editMode);
+  }
+
+  reloadPage() {
+    location.reload();
   }
 
   toggleCompletion(goal: Goal) {

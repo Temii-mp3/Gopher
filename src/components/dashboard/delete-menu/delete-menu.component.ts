@@ -7,8 +7,8 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import { Goal } from '../../../models/goal.model';
-import { TestGoal } from '../../../services/test-goal.service';
+import { Goal } from '../../../models/models';
+import { TestGoal } from '../../../services/goal.service';
 
 @Component({
   selector: 'app-delete-menu.component',
