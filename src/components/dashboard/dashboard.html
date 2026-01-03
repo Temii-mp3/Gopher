@@ -17,34 +17,64 @@
       </div>
       <div class="chart_goalsContainer">
         <mat-card class="chart_goalsCard" appearance="outlined">
-          <div class="chart">
-            <canvas
-              baseChart
-              width="800"
-              height="400"
-              [type]="'line'"
-              [data]="lineChartData"
-              [options]="lineChartOptions"
-              [legend]="lineChartLegend"
-            >
-            </canvas>
-          </div>
           <div class="goalContainer">
             @if(viewMode) {
+            <div class="chart">
+              <canvas
+                baseChart
+                width="800"
+                height="400"
+                [type]="'line'"
+                [data]="lineChartData"
+                [options]="lineChartOptions"
+                [legend]="lineChartLegend"
+              >
+              </canvas>
+            </div>
             <mat-card class="goalCard" appearance="outlined">
               <mat-card-header>
                 <mat-card-title>Your Goals</mat-card-title>
                 <mat-card-subtitle>Goals for: {{ currDate }} </mat-card-subtitle>
               </mat-card-header>
-              <mat-card-content>
-                @for (item of testService.goals; track item.id) {
-                <mat-card>
-                  <mat-card-header>
+              <mat-card-content class="child_container">
+                @for (item of paginatedGoals; track item.id) {
+                <mat-card class="goal">
+                  @if(item.completed) {
+                  <div>
+                    <mat-card-title>
+                      <s>{{ item.name }}</s></mat-card-title
+                    >
+                    <mat-card-subtitle>
+                      <s>{{ item.target }}</s></mat-card-subtitle
+                    >
+                  </div>
+
+                  <mat-checkbox [checked]="item.completed" (change)="toggleCompletion(item)"
+                    >Completed</mat-checkbox
+                  >
+
+                  } @else {
+                  <div>
                     <mat-card-title>{{ item.name }}</mat-card-title>
-                    <mat-card-subtitle>{{ item.target }}</mat-card-subtitle>
-                  </mat-card-header>
+                    <mat-card-subtitle> {{ item.target }}</mat-card-subtitle>
+                  </div>
+
+                  <mat-checkbox [checked]="item.completed" (change)="toggleCompletion(item)"
+                    >Complete</mat-checkbox
+                  >
+
+                  }
                 </mat-card>
                 }
+                <mat-paginator
+                  [length]="totalGoals"
+                  [pageSize]="pageSize"
+                  [pageIndex]="pageIndex"
+                  [pageSizeOptions]="pageSizeOptions"
+                  (page)="onPageChange($event)"
+                  aria-label="Select page"
+                >
+                </mat-paginator>
               </mat-card-content>
             </mat-card>
             } @else{
@@ -53,9 +83,8 @@
                 <mat-card-title>Your Goals</mat-card-title>
                 <mat-card-subtitle>Edit Goals</mat-card-subtitle>
               </mat-card-header>
-              <mat-dialog-content>
-                @for (goal of testService.goals; track goal.id) {
-
+              <mat-card-content class="child_container">
+                @for (goal of paginatedGoals; track goal.id) {
                 <mat-card class="edit_container">
                   <mat-card-header>
                     <mat-card-title>{{ goal.name }}</mat-card-title>
@@ -70,7 +99,16 @@
                   </mat-menu>
                 </mat-card>
                 }
-              </mat-dialog-content>
+                <mat-paginator
+                  [length]="totalGoals"
+                  [pageSize]="pageSize"
+                  [pageIndex]="pageIndex"
+                  [pageSizeOptions]="pageSizeOptions"
+                  (page)="onPageChange($event)"
+                  aria-label="Select page"
+                >
+                </mat-paginator>
+              </mat-card-content>
             </mat-card>
             }
           </div>
