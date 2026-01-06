@@ -5,6 +5,7 @@ import { Sprint } from '../models/models';
   providedIn: 'root', // Enables the service to be accessible throughout the entire application.
 })
 export class UtilService {
+  allowedDays: Set<number> = new Set<number>();
   reloadPage() {
     location.reload();
   }

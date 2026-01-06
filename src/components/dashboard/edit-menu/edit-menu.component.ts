@@ -19,7 +19,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { Goal } from '../../../models/models';
 
 @Component({
-  selector: 'app-add-goal.component',
+  selector: 'app-add-goal',
   imports: [
     MatSelectModule,
     MatDialogActions,
@@ -51,9 +51,6 @@ export class EditMenuComponent {
   freqOptions: String[] = [];
 
   constructor() {
-    for (let i = 0; i < 10; i++) {
-      this.freqOptions.push(i.toString() + 'x');
-    }
     this.goalName.set(this.data.name);
     this.goalTarget.set(this.data.target);
     this.frequency.set(this.data.frequency);

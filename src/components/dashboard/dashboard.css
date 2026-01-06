@@ -96,6 +96,12 @@ align-items: center;
     justify-content: space-between;
 }
 
+.planningOptions{
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
 .goal{
     display: flex;
     flex-direction: row;

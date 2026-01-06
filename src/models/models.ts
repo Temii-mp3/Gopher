@@ -12,6 +12,7 @@ export interface Goal {
 export interface Sprint {
   name: string;
   goals: Goal[];
+  duration: number;
   start: Date;
   end: Date;
   id: string;

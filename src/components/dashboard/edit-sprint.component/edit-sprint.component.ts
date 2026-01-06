@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, signal, model, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, signal, model, inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -15,14 +16,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { Sprint } from '../../models/models';
+import { Sprint } from '../../../models/models';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCard } from '@angular/material/card';
-import { SprintService } from '../../services/sprint.service';
-import { UtilService } from '../../services/util.service';
-
+import { SprintService } from '../../../services/sprint.service';
 @Component({
-  selector: 'app-add-sprint',
+  selector: 'app-edit-sprint',
   imports: [
     MatSelectModule,
     MatDialogActions,
@@ -37,65 +36,54 @@ import { UtilService } from '../../services/util.service';
     MatCard,
   ],
   providers: [provideNativeDateAdapter()],
-  templateUrl: './add-sprint.component.html',
-  styleUrl: './add-sprint.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './edit-sprint.component.html',
+  styleUrl: './edit-sprint.component.css',
 })
-export class AddSprintComponent {
-  newSprintForm!: FormGroup;
-
-  utilService = inject(UtilService);
-  currDate: number = new Date().getDate();
+export class EditSprintComponent implements OnInit {
+  data: Sprint = inject(MAT_DIALOG_DATA);
+  editedSprintForm!: FormGroup;
   sprintService = inject(SprintService);
+  currDate: number = new Date().getDate();
   datePicker = model<Date | null>(null);
   allowedDays: Set<number> = new Set([7, 14, 21, 28]);
-
-  goalFreq: String[] = ['Daily', 'Weekly', 'Biweekly', 'Monthly'];
-  freqOptions: String[] = [];
-  readonly dialogRef = inject(MatDialogRef<AddSprintComponent>);
+  readonly dialogRef = inject(MatDialogRef<EditSprintComponent>);
   errorMessage = signal('');
 
   constructor(private fb: FormBuilder) {
-    for (let i = 0; i < 10; i++) {
-      this.freqOptions.push(i.toString() + 'x');
-    }
-    console.log(this.freqOptions);
-
-    this.newSprintForm = this.fb.group({
+    this.editedSprintForm = this.fb.group({
       startDate: [null, Validators.required],
       endDate: [null, Validators.required],
     });
   }
-  randomIDGenerator(): string {
-    return (Math.floor(Math.random() * (100 - 500 + 1)) + 100).toString();
+  ngOnInit(): void {
+    this.editedSprintForm.patchValue({
+      startDate: this.data.start,
+      endDate: this.data.end,
+    });
   }
 
-  createNewSprint() {
+  editSprint() {
     const sprint = this.sprintService.currSprint();
-    if (this.newSprintForm.invalid) {
+    if (this.editedSprintForm.invalid) {
       alert('Please fill out all required fields.');
       return;
     } else if (sprint && sprint.status == 'active') {
       alert('Only one active sprints are allowed at a time.');
     } else {
-      const formValue = this.newSprintForm.value;
-      const sprintName = 'Sprint' + ' ' + this.sprintService.pastSprints().length + 1;
-      console.log(sprintName);
-      const sprint: Sprint = {
-        name: sprintName,
-        start: formValue.startDate,
-        end: formValue.endDate,
-        duration: 0,
-        status: 'planning',
-        id: this.randomIDGenerator(),
-        goals: [],
-        completion: 0,
-      };
+      const formValue = this.editedSprintForm.value;
 
-      this.sprintService.uploadSprint(sprint);
+      const sprint = this.sprintService.currSprint();
 
-      console.log(sprint);
-      this.dialogRef.close();
+      if (sprint) {
+        const updatedSprint: Sprint = {
+          ...sprint,
+          start: formValue.startDate,
+          end: formValue.endDate,
+        };
+
+        this.sprintService.uploadSprint(updatedSprint);
+        this.dialogRef.close();
+      }
     }
   }
 
@@ -107,7 +95,7 @@ export class AddSprintComponent {
 
   endFilter = (d: Date | null): boolean => {
     if (!d) return false;
-    const startDateValue = this.newSprintForm.get('startDate')!.value as Date;
+    const startDateValue = this.editedSprintForm.get('startDate')!.value as Date;
 
     const startDay = startDateValue.getDay();
     const endDay = d?.getDay();
@@ -132,7 +120,7 @@ export class AddSprintComponent {
   }
 
   updateErrorMessage() {
-    if (this.newSprintForm.hasError('required')) {
+    if (this.editedSprintForm.hasError('required')) {
       this.errorMessage.set('You must enter a value');
     } else {
       this.errorMessage.set('YOLO');

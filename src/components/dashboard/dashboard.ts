@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogContent } from '@angular/material/dialog';
@@ -19,6 +19,8 @@ import { DeleteMenuComponent } from './delete-menu/delete-menu.component';
 import { MatPaginatorModule, MatPaginator, PageEvent } from '@angular/material/paginator';
 import { AddSprintComponent } from '../add-sprint.component/add-sprint.component';
 import { SprintService } from '../../services/sprint.service';
+import { EditSprintComponent } from './edit-sprint.component/edit-sprint.component';
+import { Sprint } from '../../models/models';
 
 @Component({
   selector: 'app-dashboard',
@@ -43,13 +45,17 @@ import { SprintService } from '../../services/sprint.service';
   styleUrls: ['./dashboard.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Dashboard {
+export class Dashboard implements OnInit {
+  ngOnInit(): void {
+    console.log(this.sprintService.currSprint());
+  }
+  msPerDay = 1000 * 60 * 60 * 24;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   //paginator props
   pageSize: number = 5;
   pageIndex: number = 0;
   pageSizeOptions: number[] = [5];
-  testService2 = inject(SprintService);
+  sprintService = inject(SprintService);
 
   viewMode: boolean = true;
   editMode: boolean = false;
@@ -85,16 +91,20 @@ export class Dashboard {
     this.dialog.open(AddSprintComponent);
   }
 
+  editSprint(sprint: Sprint) {
+    this.dialog.open(EditSprintComponent, { data: sprint });
+  }
+
   startSprint() {
-    this.testService2.sprint[0].status = 'active';
+    this.sprintService.startSprint();
   }
 
   endSprint() {
-    this.testService2.sprint[0].status = 'completed';
+    this.sprintService.endSprint();
   }
 
   getCurrSprint() {
-    return this.testService2.sprint[0] == null ? null : this.testService2.sprint[0];
+    return this.sprintService.currSprint();
   }
 
   editGoal(goal: Goal) {
@@ -113,10 +123,6 @@ export class Dashboard {
     this.editMode = !this.editMode;
     this.viewMode = false;
     console.log(this.editMode);
-  }
-
-  reloadPage() {
-    location.reload();
   }
 
   toggleCompletion(goal: Goal) {
