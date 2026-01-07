@@ -15,7 +15,6 @@ import { TestGoal } from '../../services/goal.service';
 import { NgClass } from '@angular/common';
 import { Goal } from '../../models/models';
 import { EditMenuComponent } from './edit-menu/edit-menu.component';
-import { DeleteMenuComponent } from './delete-menu/delete-menu.component';
 import { MatPaginatorModule, MatPaginator, PageEvent } from '@angular/material/paginator';
 import { AddSprintComponent } from '../add-sprint.component/add-sprint.component';
 import { SprintService } from '../../services/sprint.service';
