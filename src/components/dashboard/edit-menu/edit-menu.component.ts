@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal, model, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, model, inject, OnInit } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -9,7 +9,13 @@ import {
   MatDialogTitle,
 } from '@angular/material/dialog';
 import { TestGoal } from '../../../services/goal.service';
-import { FormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -17,6 +23,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { Goal } from '../../../models/models';
+import { MatCard } from '@angular/material/card';
 
 @Component({
   selector: 'app-add-goal',
@@ -25,6 +32,8 @@ import { Goal } from '../../../models/models';
     MatDialogActions,
     MatDialogTitle,
     MatFormFieldModule,
+    MatCard,
+    ReactiveFormsModule,
     MatDialogClose,
     MatDatepickerModule,
     MatInputModule,
@@ -36,42 +45,59 @@ import { Goal } from '../../../models/models';
   styleUrl: './edit-menu.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EditMenuComponent {
+export class EditMenuComponent implements OnInit {
+  editGoalForm!: FormGroup;
+  errorMessage = signal('');
   data: Goal = inject(MAT_DIALOG_DATA);
   testService = inject(TestGoal);
   datePicker = model<Date | null>(null);
-  readonly goalName = signal('');
-  readonly goalTarget = signal('');
-  readonly frequency = signal('');
-  readonly timeframe = signal('');
-  readonly startDate = signal<Date | null>(null);
-  readonly endDate = signal<Date | null>(null);
-  goalFreq: String[] = ['Daily', 'Weekly', 'Biweekly', 'Monthly'];
+  readonly dialogRef = inject(MatDialogRef<EditMenuComponent>);
 
   freqOptions: String[] = [];
 
-  constructor() {
-    this.goalName.set(this.data.name);
-    this.goalTarget.set(this.data.target);
-    this.frequency.set(this.data.frequency);
-    this.timeframe.set(this.data.timeframe);
-    this.startDate.set(this.data.start);
-    this.endDate.set(this.data.end);
+  constructor(private fb: FormBuilder) {
+    for (let i = 0; i < 7; i++) {
+      this.freqOptions.push(i.toString() + 'x');
+    }
+    console.log(this.freqOptions);
+
+    this.editGoalForm = this.fb.group({
+      name: ['', Validators.required],
+      frequency: ['', Validators.required],
+    });
+  }
+  ngOnInit(): void {
+    this.editGoalForm.patchValue({
+      name: this.data.name,
+      frequency: this.data.frequency,
+    });
   }
 
   editGoal() {
-    const goal: Goal = {
-      name: this.goalName(),
-      target: this.goalTarget(),
-      frequency: this.frequency(),
-      timeframe: this.timeframe(),
-      start: this.startDate()!,
-      end: this.endDate()!,
-      completed: false,
-      id: this.data.id,
-    };
+    const formValue = this.editGoalForm.value;
+    const goal: Goal | null = this.testService.goals().find((i) => i.id == this.data.id) ?? null;
+    if (goal) {
+      const updatedGoal: Goal = {
+        ...goal,
+        name: formValue.name,
+        frequency: formValue.frequency,
+      };
 
-    const prevIndex = this.testService.goals.findIndex((c) => c.id == this.data.id);
-    this.testService.goals.splice(prevIndex, 1, goal);
+      this.testService.updateGoal(updatedGoal.id, updatedGoal);
+    }
+
+    this.dialogRef.close();
+  }
+
+  onCancelClick() {
+    this.dialogRef.close();
+  }
+
+  updateErrorMessage() {
+    if (this.editGoalForm.hasError('required')) {
+      this.errorMessage.set('You must enter a value');
+    } else {
+      this.errorMessage.set('YOLO');
+    }
   }
 }

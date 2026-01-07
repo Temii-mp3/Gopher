@@ -1,56 +1,27 @@
 <h2 mat-dialog-title>Goal Details:</h2>
-<ol>
-  <li>
-    <mat-form-field>
-      <mat-label>Goal Name: </mat-label>
-      <input matInput [(ngModel)]="goalName" />
-      <mat-hint>Name of the goal</mat-hint>
-    </mat-form-field>
-  </li>
-  <li>
-    <mat-form-field>
-      <mat-label>Goal Target: </mat-label>
-      <input matInput [(ngModel)]="goalTarget" />
-      <mat-hint>Planned Accomplishment</mat-hint>
-    </mat-form-field>
-  </li>
-  <li>
-    <div class="freq">
-      <mat-form-field>
+<mat-card appearance="outlined">
+  <div>
+    <form class="goalGrid" [formGroup]="editGoalForm" (blur)="updateErrorMessage()">
+      <mat-form-field appearance="fill">
+        <mat-label>Goal Name: </mat-label>
+        <input matInput formControlName="name" />
+        <mat-hint>Name of the goal</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
         <mat-label>Frequency: </mat-label>
-        <mat-select [(ngModel)]="frequency" name="freq">
+        <mat-select formControlName="frequency" name="freq">
           @for(freq of freqOptions; track freq){
           <mat-option [value]="freq">{{ freq }}</mat-option>
           }
         </mat-select>
         <mat-hint>How Often</mat-hint>
       </mat-form-field>
+    </form>
+  </div>
 
-      <mat-form-field>
-        <mat-label>TimeFrame: </mat-label>
-        <mat-select [(ngModel)]="timeframe">
-          @for(freq of goalFreq; track freq){
-          <mat-option [value]="freq">{{ freq }}</mat-option>
-          }
-        </mat-select>
-        <mat-hint>How Long</mat-hint>
-      </mat-form-field>
-    </div>
-  </li>
-  <li>
-    <mat-form-field>
-      <mat-label>Enter a date range</mat-label>
-      <mat-date-range-input [rangePicker]="picker">
-        <input matStartDate placeholder="Start date" />
-        <input matEndDate placeholder="End date" />
-      </mat-date-range-input>
-      <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-date-range-picker #picker></mat-date-range-picker>
-    </mat-form-field>
-  </li>
-</ol>
-<mat-dialog-actions>
-  <button matButton mat-dialog-close>Cancel</button>
-  <button matButton (click)="editGoal()">Edit</button>
-</mat-dialog-actions>
+  <mat-dialog-actions>
+    <button class="bttn" (click)="onCancelClick()">Cancel</button>
+    <button class="bttn" (click)="editGoal()">Edit</button>
+  </mat-dialog-actions>
+</mat-card>

@@ -9,6 +9,7 @@ import {
 } from '@angular/material/dialog';
 import { Goal } from '../../../models/models';
 import { TestGoal } from '../../../services/goal.service';
+import { AlertDialogService } from '../../../services/alert-dialog.service';
 
 @Component({
   selector: 'app-delete-menu.component',
@@ -17,11 +18,7 @@ import { TestGoal } from '../../../services/goal.service';
   styleUrl: './delete-menu.component.css',
 })
 export class DeleteMenuComponent {
+  constructor(private alertService: AlertDialogService) {}
   data: Goal = inject(MAT_DIALOG_DATA);
   testService = inject(TestGoal);
-
-  deleteGoal() {
-    const index = this.testService.goals.findIndex((c) => c.id == this.data.id);
-    this.testService.goals.splice(index);
-  }
 }

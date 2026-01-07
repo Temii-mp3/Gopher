@@ -21,6 +21,7 @@ import { AddSprintComponent } from '../add-sprint.component/add-sprint.component
 import { SprintService } from '../../services/sprint.service';
 import { EditSprintComponent } from './edit-sprint.component/edit-sprint.component';
 import { Sprint } from '../../models/models';
+import { AlertDialogService } from '../../services/alert-dialog.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -46,6 +47,7 @@ import { Sprint } from '../../models/models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Dashboard implements OnInit {
+  constructor(private alertService: AlertDialogService) {}
   ngOnInit(): void {
     console.log(this.sprintService.currSprint());
   }
@@ -69,7 +71,7 @@ export class Dashboard implements OnInit {
   get paginatedGoals() {
     const startIndex = this.pageIndex * this.pageSize;
     const endIndex = startIndex + this.pageSize;
-    return this.testService.goals.slice(startIndex, endIndex);
+    return this.testService.goals().slice(startIndex, endIndex);
   }
 
   // Handle page changes
@@ -84,7 +86,13 @@ export class Dashboard implements OnInit {
   }
 
   addGoal() {
-    this.dialog.open(AddGoalComponent);
+    const infoMsg1 = 'Cannot add goal';
+    const infoMsg2 = 'You need to create a sprint before adding goals';
+    if (this.sprintService.currSprint() == null) {
+      this.alertService.openInfo(infoMsg1, infoMsg2);
+    } else {
+      this.dialog.open(AddGoalComponent);
+    }
   }
 
   createSprint() {
@@ -110,8 +118,15 @@ export class Dashboard implements OnInit {
   editGoal(goal: Goal) {
     this.dialog.open(EditMenuComponent, { data: goal });
   }
+
   deleteGoal(goal: Goal) {
-    this.dialog.open(DeleteMenuComponent, { data: goal });
+    this.alertService
+      .openConfirmation('Delete Item', 'Are you sure you want to delete this item?')
+      .subscribe((result) => {
+        if (result) {
+          this.testService.deleteGoal(goal.id, goal);
+        }
+      });
   }
 
   toggleView() {
@@ -128,7 +143,7 @@ export class Dashboard implements OnInit {
   toggleCompletion(goal: Goal) {
     goal.completed = !goal.completed;
     this.completeCheckBox = goal.completed ? 'Completed' : 'Complete';
-    this.testService.goals.sort((a, b) => Number(a.completed) - Number(b.completed));
+    this.testService.goals().sort((a, b) => Number(a.completed) - Number(b.completed));
   }
 
   public lineChartData: ChartConfiguration<'line'>['data'] = {

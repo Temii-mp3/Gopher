@@ -19,6 +19,9 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { Goal } from '../../models/models';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCard } from '@angular/material/card';
+import { SprintService } from '../../services/sprint.service';
+import { AlertDialogComponent } from '../alert-dialog.component/alert-dialog.component';
+import { AlertDialogService } from '../../services/alert-dialog.service';
 
 @Component({
   selector: 'app-add-goal.component',
@@ -46,25 +49,22 @@ export class AddGoalComponent {
   currDate: number = new Date().getDate();
   testService = inject(TestGoal);
   datePicker = model<Date | null>(null);
+  sprintService = inject(SprintService);
 
   goalFreq: String[] = ['Daily', 'Weekly', 'Biweekly', 'Monthly'];
   freqOptions: String[] = [];
   readonly dialogRef = inject(MatDialogRef<AddGoalComponent>);
   errorMessage = signal('');
 
-  constructor(private fb: FormBuilder) {
-    for (let i = 0; i < 10; i++) {
+  constructor(private fb: FormBuilder, private alertService: AlertDialogService) {
+    for (let i = 0; i < 7; i++) {
       this.freqOptions.push(i.toString() + 'x');
     }
     console.log(this.freqOptions);
 
     this.newGoalForm = this.fb.group({
       name: ['', Validators.required],
-      target: [''],
       frequency: ['', Validators.required],
-      timeframe: ['', Validators.required],
-      startDate: [null, Validators.required],
-      endDate: [null, Validators.required],
     });
   }
   randomIDGenerator(): string {
@@ -76,6 +76,7 @@ export class AddGoalComponent {
       alert('Please fill out all required fields.');
       return;
     }
+
     const goal: Goal = {
       ...this.newGoalForm.value,
       completed: false,
@@ -83,7 +84,7 @@ export class AddGoalComponent {
     };
 
     console.log(goal);
-    this.testService.goals.push(goal);
+    this.testService.goals().push(goal);
     this.dialogRef.close();
   }
 

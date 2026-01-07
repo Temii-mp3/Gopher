@@ -59,8 +59,6 @@
                   <div>
                     <mat-card-title>
                       <s>{{ item.name }}</s></mat-card-title>
-                    <mat-card-subtitle>
-                      <s>{{ item.target }}</s></mat-card-subtitle>
                   </div>
 
                   <mat-checkbox [checked]="item.completed" (change)="toggleCompletion(item)">Completed</mat-checkbox>
@@ -68,7 +66,6 @@
                   } @else {
                   <div>
                     <mat-card-title>{{ item.name }}</mat-card-title>
-                    <mat-card-subtitle> {{ item.target }}</mat-card-subtitle>
                   </div>
 
                   <mat-checkbox [checked]="item.completed" (change)="toggleCompletion(item)">Complete</mat-checkbox>
@@ -93,7 +90,6 @@
               <mat-card class="edit_container">
                 <mat-card-header>
                   <mat-card-title>{{ goal.name }}</mat-card-title>
-                  <mat-card-subtitle>{{ goal.target }}</mat-card-subtitle>
                 </mat-card-header>
                 <button matIconButton [matMenuTriggerFor]="menu" #menuTrigger>
                   <mat-icon>more_vert</mat-icon>
