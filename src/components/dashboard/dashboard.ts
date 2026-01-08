@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogContent } from '@angular/material/dialog';
@@ -43,7 +50,6 @@ import { AlertDialogService } from '../../services/alert-dialog.service';
   ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Dashboard implements OnInit {
   constructor(private alertService: AlertDialogService) {}
@@ -68,9 +74,10 @@ export class Dashboard implements OnInit {
   testService = inject(TestGoal);
 
   get paginatedGoals() {
+    const sprint = this.sprintService.currSprint();
     const startIndex = this.pageIndex * this.pageSize;
     const endIndex = startIndex + this.pageSize;
-    return this.testService.goals().slice(startIndex, endIndex);
+    return sprint?.goals.slice(startIndex, endIndex);
   }
 
   // Handle page changes
@@ -103,7 +110,22 @@ export class Dashboard implements OnInit {
   }
 
   startSprint() {
-    this.sprintService.startSprint();
+    const currSprint = this.getCurrSprint();
+    if (currSprint && currSprint.goals.length == 0) {
+      console.log('No goals added');
+      this.alertService.openInfo(
+        'Cannot start sprint',
+        'Please add at least one goal before starting the sprint.'
+      );
+    } else {
+      this.alertService
+        .openConfirmation('Start Sprint', 'Sprints cannot be edited once started. Continue?')
+        .subscribe((result) => {
+          if (result) {
+            this.sprintService.startSprint();
+          }
+        });
+    }
   }
 
   endSprint() {
@@ -139,27 +161,28 @@ export class Dashboard implements OnInit {
     console.log(this.editMode);
   }
 
-  toggleCompletion(goal: Goal) {
-    goal.completed = !goal.completed;
-    this.completeCheckBox = goal.completed ? 'Completed' : 'Complete';
-    this.testService.goals().sort((a, b) => Number(a.completed) - Number(b.completed));
+  isSprintActive(): boolean {
+    return this.sprintService.currSprint()?.status === 'active';
   }
 
-  public lineChartData: ChartConfiguration<'line'>['data'] = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+  lineChartData = computed<ChartConfiguration<'line'>['data']>(() => ({
+    labels: this.sprintService.pastSprints().map((s) => s.name),
     datasets: [
       {
         data: [65, 59, 80, 81, 56, 55, 40],
-        label: 'Goals Completed',
-        fill: true,
+        label: 'Completion Rate (%)',
+        fill: false,
         tension: 0.5,
         borderColor: 'black',
-        backgroundColor: 'rgba(255,0,0,0.3)',
       },
     ],
-  };
+  }));
   public lineChartOptions: ChartOptions<'line'> = {
     responsive: false,
   };
   public lineChartLegend = true;
+
+  getPastSprints(): string[] {
+    return this.sprintService.pastSprints().map((s) => s.name);
+  }
 }

@@ -1,8 +1,10 @@
 export interface Goal {
   name: string;
-  frequency: string;
+  frequency: number;
   completed: boolean;
   completionDates: Date[];
+  completionTimes: number;
+  done: boolean;
   id: string;
 }
 

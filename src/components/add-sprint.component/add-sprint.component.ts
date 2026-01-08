@@ -20,6 +20,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatCard } from '@angular/material/card';
 import { SprintService } from '../../services/sprint.service';
 import { UtilService } from '../../services/util.service';
+import { AlertDialogService } from '../../services/alert-dialog.service';
 
 @Component({
   selector: 'app-add-sprint',
@@ -55,7 +56,7 @@ export class AddSprintComponent {
   readonly dialogRef = inject(MatDialogRef<AddSprintComponent>);
   errorMessage = signal('');
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private alertService: AlertDialogService) {
     for (let i = 0; i < 10; i++) {
       this.freqOptions.push(i.toString() + 'x');
     }

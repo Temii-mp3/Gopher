@@ -52,13 +52,13 @@ export class AddGoalComponent {
   sprintService = inject(SprintService);
 
   goalFreq: String[] = ['Daily', 'Weekly', 'Biweekly', 'Monthly'];
-  freqOptions: String[] = [];
+  freqOptions: number[] = [];
   readonly dialogRef = inject(MatDialogRef<AddGoalComponent>);
   errorMessage = signal('');
 
   constructor(private fb: FormBuilder, private alertService: AlertDialogService) {
     for (let i = 0; i < 7; i++) {
-      this.freqOptions.push(i.toString() + 'x');
+      this.freqOptions.push(i);
     }
     console.log(this.freqOptions);
 
@@ -80,11 +80,15 @@ export class AddGoalComponent {
     const goal: Goal = {
       ...this.newGoalForm.value,
       completed: false,
+      completionDates: [],
       id: this.randomIDGenerator(),
+      done: false,
     };
 
     console.log(goal);
-    this.testService.goals().push(goal);
+    this.sprintService.addGoalToCurrentSprint(goal);
+
+    console.log(this.sprintService.currSprint());
     this.dialogRef.close();
   }
 
